@@ -1,0 +1,205 @@
+import psycopg2
+
+def connect():
+    conn=psycopg2.connect("dbname='restaurant' user='postgres' password ='postgres123' host='localhost' port='5432'")
+
+    cur=conn.cursor()
+
+    cur.execute("CREATE TABLE IF NOT EXISTS shop(shopid text PRIMARY KEY,name text,address text,phone text,family text UNIQUE)")
+   
+    cur.execute("CREATE TABLE IF NOT EXISTS ingredients(name TEXT PRIMARY KEY,quantity integer,buying_date date,expiry_date date,family text,foreign key(family) references shop(family) on delete cascade on update cascade)")
+    
+    cur.execute("CREATE TABLE IF NOT EXISTS recipecatalog(recipeid integer PRIMARY KEY,name text )")
+  
+    cur.execute("CREATE TABLE IF NOT EXISTS recipe(name text, ingredient text ,quantity integer,cooking_time integer , PRIMARY KEY(name,ingredient), foreign key(ingredient) references ingredients(name) on update cascade on delete cascade )")
+
+    cur.execute("CREATE TABLE IF NOT EXISTS schedule(day text,recipeid integer,meal text,PRIMARY KEY(day,meal),foreign key(recipeid) references recipecatalog(recipeid) on update cascade on delete cascade)")
+
+    cur.execute("CREATE TABLE IF NOT EXISTS nutrition(ingredient text PRIMARY KEY,calories integer,carb integer,protein integer,fat integer,foreign key(ingredient) references ingredients(name) on update cascade on delete cascade )")
+
+    
+    conn.commit()
+    conn.close()
+
+def datashop(shopid,name,address,phone,family):
+  conn=psycopg2.connect("dbname='restaurant' user='postgres' password ='postgres123' host='localhost' port='5432'")
+  cur=conn.cursor()
+  cur.execute("INSERT INTO shop VALUES(%s,%s,%s,%s,%s)",(shopid,name,address,phone,family,))
+  conn.commit()
+  conn.close()
+
+def dataingredients(name,quantity,buying_date,expiry_date,family):
+  conn=psycopg2.connect("dbname='restaurant' user='postgres' password ='postgres123' host='localhost' port='5432'")
+  cur=conn.cursor()
+  cur.execute("INSERT INTO ingredients VALUES(%s,%s,%s,%s,%s)",(name,quantity,buying_date,expiry_date,family,))
+  conn.commit()
+  conn.close()
+def datarecipecatalog(recipeid,name):
+  conn=psycopg2.connect("dbname='restaurant' user='postgres' password ='postgres123' host='localhost' port='5432'")
+  cur=conn.cursor()
+  cur.execute("INSERT INTO recipecatalog VALUES(%s,%s)",(recipeid,name,))
+  conn.commit()
+  conn.close()
+def datarecipe(name,ingredient,quantity,cooking_time):
+  conn=psycopg2.connect("dbname='restaurant' user='postgres' password ='postgres123' host='localhost' port='5432'")
+  cur=conn.cursor()
+  cur.execute("INSERT INTO recipe VALUES(%s,%s,%s,%s)",(name,ingredient,quantity,cooking_time,))
+  conn.commit()
+  conn.close()
+def dataschedule(day,id,meal):
+  conn=psycopg2.connect("dbname='restaurant' user='postgres' password ='postgres123' host='localhost' port='5432'")
+  cur=conn.cursor()
+  cur.execute("INSERT INTO schedule VALUES(%s,%s,%s)",(day,id,meal,))
+  conn.commit()
+  conn.close()
+def datanutrition(ingredient,calories,carb,protein,fat):
+  conn=psycopg2.connect("dbname='restaurant' user='postgres' password ='postgres123' host='localhost' port='5432'")
+  cur=conn.cursor()
+  cur.execute("INSERT INTO nutrition VALUES(%s,%s,%s,%s,%s)",(ingredient,calories,carb,protein,fat,))
+  conn.commit()
+  conn.close()
+
+
+def show():
+  conn=psycopg2.connect("dbname='restaurant' user='postgres' password ='postgres123' host='localhost' port='5432'")
+  cur=conn.cursor()
+  cur.execute("SELECT * FROM ingredients")
+  print(cur.fetchall())
+  cur=conn.cursor()
+  cur.execute("SELECT * FROM  recipe")
+  print(cur.fetchall())
+  cur=conn.cursor()
+  cur.execute("SELECT * FROM schedule")
+  print(cur.fetchall())
+  cur=conn.cursor()
+  cur.execute("SELECT * FROM nutrition")
+  print(cur.fetchall())
+  cur=conn.cursor()
+  cur.execute("SELECT * FROM  shop")
+  print(cur.fetchall())
+  conn.close()
+
+  
+
+connect()
+
+datashop("s1","Katrina groceries","e-city","987654321","grocery")
+datashop("s2","Alia veggies","hosur","987654123","vegetable")
+datashop("s3","Ramya shop","majestic","987654231","meat")
+datashop("s4","Mother dairy","m-park","987654253","dairy")
+
+
+dataingredients("Urad Dal",1000,"2018-09-01","2019-03-17","grocery")
+dataingredients("Rice",2000,"2018-09-17","2019-11-01","grocery")
+dataingredients("Wheat Flour",2500,"2018-10-24","2018-12-24","grocery")
+dataingredients("Penne Pasta",100,"2018-09-26","2019-03-26","grocery")
+dataingredients("Potato",500,"2018-10-28","2018-11-07","vegetable")
+dataingredients("Tomato",500,"2018-10-28","2018-10-31","vegetable")
+dataingredients("Onion",800,"2018-10-28","2018-11-04","vegetable")
+dataingredients("Beans",200,"2018-10-25","2018-11-28","vegetable")
+dataingredients("Cauliflower",500,"2018-10-28","2018-10-31","vegetable")
+dataingredients("Carrot",250,"2018-10-25","2018-10-31","vegetable")
+dataingredients("Cabbage",250,"2018-10-25","2018-11-04","vegetable")
+dataingredients("Chicken",750,"2018-10-28","2018-10-29","meat")
+dataingredients("Peanut",100,"2018-08-15","2018-02-15","grocery")
+dataingredients("Ketchup",500,"2018-09-25","2019-09-25","grocery")
+dataingredients("Paneer",250,"2018-10-27","2018-10-29","dairy")
+dataingredients("Peas",200,"2018-10-16","2018-10-24","vegetable")
+dataingredients("Capsicum",200,"2018-10-27","2018-10-31","vegetable")
+dataingredients("Tarmarind",100,"2018-08-20","2018-10-24","grocery")
+dataingredients("Kidney Beans",500,"2018-10-27","2018-12-27","grocery")
+
+datarecipecatalog(1,"Masala Dosa")
+datarecipecatalog(2,"Idli")
+datarecipecatalog(3,"Aloo paratha")
+datarecipecatalog(4,"Pasta")
+datarecipecatalog(5,"Matar Paneer")
+datarecipecatalog(6,"Mix Veg")
+datarecipecatalog(7,"Fried Rice")
+datarecipecatalog(8,"Puliyogare")
+datarecipecatalog(9,"Rajma Masala")
+datarecipecatalog(10,"Chicken Biryani")
+
+datarecipe("Masala Dosa","Urad Dal",50,5)
+datarecipe("Masala Dosa","Rice",100,5)
+datarecipe("Masala Dosa","Potato",100,5)
+datarecipe("Masala Dosa","Onion",30,5)				
+datarecipe("Idli","Rice",100,10)
+datarecipe("Idli","Urad Dal",25,10)		
+datarecipe("Aloo Paratha","Wheat Flour",100,5)
+datarecipe("Aloo Paratha","Potato",150,5)
+datarecipe("Aloo Paratha","Onion",50,5)		
+datarecipe("Pasta","Penne Pasta",150,15)
+datarecipe("Pasta","Tomato",50,15)
+datarecipe("Pasta","Ketchup",20,15)
+datarecipe("Pasta","Onion",30,15)		
+datarecipe("Matar Paneer","Paneer",200,20)
+datarecipe("Matar Paneer","Peas",50,20)
+datarecipe("Matar Paneer","Tomato",50,20)		
+datarecipe("Mix Veg","Potato",100,20)
+datarecipe("Mix Veg","Cauliflower",50,20)
+datarecipe("Mix Veg","Capsicum",50,20)
+datarecipe("Mix Veg","Carrot",50,20)		
+datarecipe("Fried Rice","Rice",150,15)
+datarecipe("Fried Rice","Beans",30,15)
+datarecipe("Fried Rice","Cabbage",50,15)		
+datarecipe("Puliyogare","Rice",150,20)
+datarecipe("Puliyogare","Peanut",40,20)
+datarecipe("Puliyogare","Tarmarind",10,20)			
+datarecipe("Rajma Masala","Kidney Beans",100,20)
+datarecipe("Rajma Masala","Tomato",30,20)
+datarecipe("Rajma Masala","Onion",20,20)		
+datarecipe("Chicken Biryani","Rice",150,25)
+datarecipe("Chicken Biryani","Chicken",150,25)
+datarecipe("Chicken Biryani","Tomato",30,25)
+datarecipe("Chicken Biryani","Onion",30,25)
+
+
+
+dataschedule("mon",1,"breakfast")
+dataschedule("mon",5,"lunch")
+dataschedule("mon",9,"dinner")
+dataschedule("tue",2,"breakfast")
+dataschedule("tue",4,"lunch")
+dataschedule("tue",8,"dinner")
+dataschedule("wed",3,"breakfast")
+dataschedule("wed",6,"lunch")
+dataschedule("wed",10,"dinner")
+dataschedule("thur",4,"breakfast")
+dataschedule("thur",9,"lunch")
+dataschedule("thur",7,"dinner")
+dataschedule("fri",2,"breakfast")
+dataschedule("fri",8,"lunch")
+dataschedule("fri",6,"dinner")
+dataschedule("sat",1,"breakfast")
+dataschedule("sat",10,"lunch")
+dataschedule("sat",5,"dinner")
+dataschedule("sun",3,"breakfast")
+dataschedule("sun",6,"lunch")
+dataschedule("sun",10,"dinner")
+
+
+datanutrition("Urad Dal",8,1,1,0)
+datanutrition("Rice",1.3,0.28,0.027,0.03)
+datanutrition("Wheat Flour",3.64,0.76,0.1,0.001)
+datanutrition("Penne Pasta",1.18,0.17,0.06,0.04)
+datanutrition("Potato",0.77,0.17,0.02,0.001)
+datanutrition("Tomato",0.18,0.39,0.009,0.002)
+datanutrition("Onion",0.4,0.09,0.011,0)
+datanutrition("Beans",3.47,0.63,0.21,0.012)
+datanutrition("Cauliflower",0.25,0.05,0.019,0.003)
+datanutrition("Carrot",0.41,0.96,0.009,0.002)
+datanutrition("Cabbage",0.25,0.06,0.013,0.001)
+datanutrition("Chicken",1.65,0,0.31,0.36)
+datanutrition("Peanut",5.67,0.16,0.26,0.49)
+datanutrition("Ketchup",1.12,0.26,0.013,0.002)
+datanutrition("Paneer",2.65,0.012,0.183,0.2)
+datanutrition("Peas",0.81,0.14,0.05,0.004)
+datanutrition("Capsicum",0.4,0.9,0.02,0)
+datanutrition("Tarmarind",2.39,0.62,0.028,0.006)
+datanutrition("Kidney Beans",3.33,0.6,0.24,0.008)
+
+
+
+
+#show()
